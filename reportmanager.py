@@ -1,63 +1,18 @@
 from ui.report import *
 
 from PyQt5.QtWidgets import QDialog, QHeaderView
-from PyQt5.QtCore import QDate, QAbstractTableModel, Qt, QVariant,\
-    QModelIndex
+from PyQt5.QtCore import QDate, QSortFilterProxyModel
 
+from baseTableModel import BaseTaBleModel
 from enums import Projects, Stages
 import datetime
 
 
-class TaskModel(QAbstractTableModel):
+class TaskModel(BaseTaBleModel):
+    headers = ["Text", "Project", "From", "On", "To", "On", "Valid", "Deadline"]
 
     def __init__(self):
-        super(TaskModel, self).__init__()
-
-        self.headers = ["Text", "Project", "From", "On", "To", "On", "Valid",
-                        "Deadline"]
-        self.tasks = []
-
-    def rowCount(self, parent=None, *args, **kwargs):
-        return len(self.tasks)
-
-    def columnCount(self, parent=None, *args, **kwargs):
-        return len(self.headers)
-
-    def data(self, index, role=None):
-        if not index.isValid():
-            return QVariant()
-
-        elif role != Qt.DisplayRole:
-            return QVariant()
-
-        data = self.tasks[index.row()][index.column()]
-        return QVariant(data)
-
-    def headerData(self, col, orientation, role=None):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return QVariant(self.headers[col])
-        return QVariant()
-
-    def setData(self, index, value, role=None):
-        if index.isValid():
-            self.tasks[index.row()][index.column()] = value
-            self.dataChanged.emit(index, index)
-            return True
-        return False
-
-    def insertRows(self, position, rows, parent=QModelIndex(), *args, **kwargs):
-        self.beginInsertRows(parent, position, position + rows - 1)
-        for i in range(rows):
-            self.tasks.insert(position, [None] * self.columnCount())
-        self.endInsertRows()
-        return True
-
-    def removeRows(self, position, rows, parent=QModelIndex(), *args, **kwargs):
-        self.beginRemoveRows(parent, position, position + rows - 1)
-        for i in range(rows):
-            self.tasks.pop(position)
-        self.endRemoveRows()
-        return True
+        super(TaskModel, self).__init__(self.headers)
 
     def setRowData(self, row, values):
         for i, val in enumerate(values):
@@ -66,6 +21,30 @@ class TaskModel(QAbstractTableModel):
             if isinstance(val, datetime.date):
                 val = str(val)
             self.setData(self.index(row, i), val)
+
+
+class ReportModel(BaseTaBleModel):
+    headers = ["Project", "Undone", "Lost", "Done"]
+
+    def __init__(self):
+        super(ReportModel, self).__init__(self.headers)
+
+        for project in Projects:
+            self.insertRows(0, 1)
+            self.setData(self.index(0, 0), project.value)
+
+    def init(self):
+        for row in range(self.rowCount()):
+            self.setData(self.index(row, 1), 0)
+            self.setData(self.index(row, 2), 0)
+            self.setData(self.index(row, 3), 0)
+
+    def add(self, project, pos):
+        for row in range(self.rowCount()):
+            if self.index(row, 0).data() == project.value:
+                old_val = self.index(row, pos).data()
+                self.setData(self.index(row, pos), old_val + 1)
+                break
 
 
 class Report(Ui_Dialog, QDialog):
@@ -81,8 +60,17 @@ class Report(Ui_Dialog, QDialog):
         self.reportBtn.clicked.connect(self.report_requested)
 
         self.taskModel = TaskModel()
-        self.taskTable.setModel(self.taskModel)
+        self.proxyModel = QSortFilterProxyModel()
+        self.proxyModel.setSourceModel(self.taskModel)
+        self.taskTable.setModel(self.proxyModel)
+
+        self.reportModel = ReportModel()
+        self.totalTable.setModel(self.reportModel)
+
+        self.taskTable.setSortingEnabled(True)
         self.taskTable.horizontalHeader()\
+            .setSectionResizeMode(0, QHeaderView.Stretch)
+        self.totalTable.horizontalHeader()\
             .setSectionResizeMode(0, QHeaderView.Stretch)
 
         today = QDate.currentDate()
@@ -93,21 +81,28 @@ class Report(Ui_Dialog, QDialog):
         start = self.fromEdit.date().toPyDate()
         finish = self.toEdit.date().toPyDate()
         tasks = self.storage.select_tasks_for_report(start, finish)
+
         self.taskModel.removeRows(0, self.taskModel.rowCount())
+        self.reportModel.init()
+
         for task in tasks:
             (task, text, project, to_stage, to_date, valid, deadline) = task
             stages = self.storage.select_stages(task, finish, to_stage)
+            # There is only one stage for the task
             if len(stages) == 0:
                 from_stage = to_stage
                 from_date = to_date
+            # There are only two stages for the task
             elif len(stages) == 1:
                 from_stage = stages[0][0]
                 from_date = stages[0][1]
             else:
+                # If the stage came before start date use that stage
                 before = [i for i in stages if i[1] < start]
                 if len(before) > 0:
                     from_stage = before[-1][0]
                     from_date = before[-1][1]
+                # Use the first stage of the task
                 else:
                     from_stage = stages[0][0]
                     from_date = stages[0][1]
@@ -116,3 +111,8 @@ class Report(Ui_Dialog, QDialog):
             self.taskModel.setRowData(0, (text, project, from_stage,
                                           from_date, to_stage, to_date,
                                           valid, deadline))
+            self.reportModel.add(project, 1)
+            if to_stage == Stages.Done:
+                self.reportModel.add(project, 3)
+            elif valid is not None and valid <= to_date:
+                self.reportModel.add(project, 2)

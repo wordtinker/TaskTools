@@ -8,6 +8,10 @@ import enums
 
 
 class TaskEdit(Ui_Dialog, QDialog):
+    """
+    Qdialog that creates or edits the task.
+    """
+
     taskCreated = pyqtSignal(str, Projects, Stages, object, object)
     taskEdited = pyqtSignal(int, str, Projects, Stages, object, object)
 
@@ -46,6 +50,10 @@ class TaskEdit(Ui_Dialog, QDialog):
             self.deadline.setDate(today)
 
     def accept(self):
+        """
+        Gathers parameters of the task and emits the signal.
+        :return:
+        """
         if self.is_valid():
             text = self.taskText.toPlainText()
             stage = enums.from_value(Stages, self.stages.currentText())

@@ -2,10 +2,20 @@ import enum
 
 
 def adapt_enum(enum_obj):
+    """
+    SQLITE adapter for custom column type support.
+    :param enum_obj:
+    :return:
+    """
     return "{};{}".format(enum_obj.name, enum_obj.value)
 
 
 def convert_enum(enum_class):
+    """
+    SQLITE connector for custom column type support.
+    :param enum_class:
+    :return: converter function.
+    """
 
     def func(s):
         e_type, val = s.decode("utf-8").split(";")
@@ -18,6 +28,12 @@ def convert_enum(enum_class):
 
 
 def from_value(enumeration, value):
+    """
+    Helper function that restores Enum from it's value.
+    :param enumeration:
+    :param value:
+    :return:
+    """
     for en in enumeration:
         if en.value == value:
             return en

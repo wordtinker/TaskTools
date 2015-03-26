@@ -8,6 +8,9 @@ import enums
 
 
 class GenEdit(Ui_Dialog, QDialog):
+    """
+    Qt dialog that allows creating and editing of generators.
+    """
     genCreated = pyqtSignal(Generators, int, str,
                             Projects, Stages, object, object)
     genEdited = pyqtSignal(int, Generators, int, str,
@@ -61,6 +64,11 @@ class GenEdit(Ui_Dialog, QDialog):
             self.deadline.setEnabled(False)
 
     def accept(self):
+        """
+        Overrides Qdialog implementation of accept function.
+        Gathers data and emits signal.
+        :return:
+        """
         if self.is_valid():
             text = self.text.toPlainText()
             stage = enums.from_value(Stages, self.stages.currentText())
@@ -87,9 +95,11 @@ class GenEdit(Ui_Dialog, QDialog):
             return
 
     def is_valid(self):
+        # Task text must be not empty
         if len(self.text.toPlainText()) == 0:
             return False
 
+        # Monthly generator cannot generate tasks later then 28th.
         if self.genType.currentText() == "Monthly" and self.dayShift.value() > 28:
             return False
 

@@ -7,6 +7,7 @@ import enums
 class Storage:
     def __init__(self, db_path):
         self.db_path = db_path
+        # Adding support for custom types in DB.
         self.db_conn = sqlite3.connect(db_path, detect_types=sqlite3.PARSE_DECLTYPES)
         sqlite3.register_adapter(enums.Projects, enums.adapt_enum)
         sqlite3.register_converter(
@@ -48,6 +49,7 @@ class Storage:
         )""")
         self.db_conn.commit()
 
+        # Enabling foreign key support
         self.db_cursor.execute("""
         PRAGMA foreign_keys = ON
         """)
@@ -83,6 +85,12 @@ class Storage:
         return gen_id
 
     def select_tasks_for_today(self):
+        """
+        Returns tasks that fit for today.
+        1) valid for today
+        2) not completed before today
+        3) returned stage is the latest stage for the task
+        """
         today = datetime.date.today()
         db_cursor = self.db_conn.cursor()
         db_cursor.execute("""SELECT
@@ -97,6 +105,12 @@ class Storage:
         return db_cursor.fetchall()
 
     def select_tasks_for_report(self, start, finish):
+        """
+        1) valid in between start and finish date
+        2) not completed before the start date
+        3) not later than finished date
+        4) returned stage is the latest stage for the task
+        """
         db_cursor = self.db_conn.cursor()
         db_cursor.execute("""SELECT
         m1.task, t.text, t.project, m1.stage, m1.date, t.valid, t.deadline
@@ -110,6 +124,10 @@ class Storage:
         return db_cursor.fetchall()
 
     def select_stages(self, task, finish, stage):
+        """
+        Returns stages for a given task excluding the given stage
+        and before the finish date.
+        """
         db_cursor = self.db_conn.cursor()
         db_cursor.execute("""SELECT
         stage, date FROM TimeLog
@@ -128,7 +146,7 @@ class Storage:
 
     def get_last_generated_date(self, gen_id):
         """
-        Find the list of dates where tasks has been generated,
+        Finds the list of dates where tasks has been generated,
         return the last such date.
         :param gen_id:
         :return:
@@ -142,7 +160,7 @@ class Storage:
         WHERE m2.rowid IS NULL
         AND t.generated_by=?
         """, (gen_id, ))
-        # Converting to datetime type
+        # Converting to datetime type because MAX() breaks the custom adapter.
         last_date = db_cursor.fetchone()[0]
         if last_date:
             last_date = last_date.split('-')

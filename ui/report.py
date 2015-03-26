@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'report.ui'
 #
-# Created: Tue Dec 30 23:00:28 2014
+# Created: Fri Jan  2 13:04:17 2015
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,6 +38,9 @@ class Ui_Dialog(object):
         self.taskTable = QtWidgets.QTableView(Dialog)
         self.taskTable.setObjectName("taskTable")
         self.gridLayout.addWidget(self.taskTable, 1, 0, 1, 1)
+        self.totalTable = QtWidgets.QTableView(Dialog)
+        self.totalTable.setObjectName("totalTable")
+        self.gridLayout.addWidget(self.totalTable, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

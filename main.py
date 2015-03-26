@@ -42,6 +42,9 @@ class Task():
 
 
 class TaskPool(QObject):
+    """
+    The lower level of task pool model.
+    """
 
     taskAdded = pyqtSignal(int, Stages, Projects)
     taskDropped = pyqtSignal(int, Stages, Projects)
@@ -126,15 +129,19 @@ class TaskPool(QObject):
         generators = self.__storage.select_generators()
         today = datetime.date.today()
         for generator in generators:
+            logging.info("Going to use generator: {}".format(generator))
             gen_id = generator[0]
             last_date = self.__storage.get_last_generated_date(gen_id)
 
             gen_type = generator[1]
             rate = generator[2]
             if gen_type == Generators.Daily:
+                logging.info("The generator is: {}".format(gen_type))
                 if not last_date:
+                    logging.info("The generator is new!")
                     self.generate_single_task(today, gen_id, *generator[3:])
                 else:
+                    logging.info("The generator is old!")
                     for i in range(abs((last_date - today).days)):
                         if (i + 1) % rate == 0:
                             delta = datetime.timedelta(days=i+1)
@@ -142,20 +149,30 @@ class TaskPool(QObject):
                             self.generate_single_task(
                                 task_date, gen_id, *generator[3:])
             elif gen_type == Generators.Monthly:
+                logging.info("The generator is: {}".format(gen_type))
                 if not last_date:
+                    logging.info("The generator is new!")
                     task_date = datetime.date(today.year, today.month, rate)
                     if task_date <= today:
                         self.generate_single_task(
                             task_date, gen_id, *generator[3:])
                 else:
-                    for i in range(today.month - last_date.month):
+                    logging.info("The generator is old!")
+                    logging.info("last date {}:".format(last_date))
+                    months = relativedelta(today, last_date).months
+                    logging.info("Difference: {}".format(months))
+                    for i in range(abs(months)):
                         task_date = datetime.date(
                             last_date.year, last_date.month, rate)
                         delta = relativedelta(months=i+1)
                         task_date = task_date + delta
+                        logging.info("New task date is {}:".format(task_date))
                         if task_date <= today:
+                            logging.info("Generating task for  {}:"
+                                         .format(task_date))
                             self.generate_single_task(
                                 task_date, gen_id, *generator[3:])
+        logging.info("Done generating!\n")
 
     def generate_single_task(self, baseline_date, gen_id,
                              text, project, stage, valid_days, deadline_days):
@@ -174,6 +191,10 @@ class TaskPool(QObject):
 
 
 class TaskListModel(QAbstractListModel):
+    """
+    The upper level of task pool model.
+    """
+
     taskMoved = pyqtSignal(int, Stages, Projects)
 
     def __init__(self, stage, project, pool):
@@ -411,7 +432,7 @@ if __name__ == "__main__":
         filename=log_name,
         format='%(asctime)s %(message)s',
         level=logging.ERROR)
-
+        # level=logging.INFO)
     logging.info("app_data_path:" + app_data_path)
 
     try:
