@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'report.ui'
 #
-# Created: Fri Jan  2 13:04:17 2015
+# Created: Wed Jan  7 10:24:28 2015
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(467, 369)
+        Dialog.resize(876, 599)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()

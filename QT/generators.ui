@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
-    <height>356</height>
+    <width>973</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,13 +45,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteGenerator">
-       <property name="text">
-        <string>Delete</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>

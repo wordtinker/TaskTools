@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'generators.ui'
 #
-# Created: Fri Dec 26 01:44:38 2014
+# Created: Wed Jan  7 11:04:30 2015
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(456, 356)
+        Dialog.resize(973, 580)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.generatorsTable = QtWidgets.QTableView(Dialog)
@@ -28,9 +28,6 @@ class Ui_Dialog(object):
         self.horizontalLayout.addWidget(self.editGenerator)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.deleteGenerator = QtWidgets.QPushButton(Dialog)
-        self.deleteGenerator.setObjectName("deleteGenerator")
-        self.horizontalLayout.addWidget(self.deleteGenerator)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
 
         self.retranslateUi(Dialog)
@@ -41,5 +38,4 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Generators"))
         self.addGenerator.setText(_translate("Dialog", "Add"))
         self.editGenerator.setText(_translate("Dialog", "Edit"))
-        self.deleteGenerator.setText(_translate("Dialog", "Delete"))
 

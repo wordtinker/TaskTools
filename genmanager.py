@@ -1,7 +1,8 @@
 from ui.generators import *
 
-from PyQt5.QtWidgets import QDialog, QAbstractItemView, QHeaderView
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QDialog, QAbstractItemView, QHeaderView, QMenu,\
+    QAction
+from PyQt5.QtCore import pyqtSignal, Qt
 
 from baseTableModel import BaseTaBleModel
 from enums import Projects, Stages, Generators
@@ -43,11 +44,16 @@ class GenManager(Ui_Dialog, QDialog):
         # Connecting signals and slots
         self.addGenerator.clicked.connect(self.add_generator_clicked)
         self.editGenerator.clicked.connect(self.edit_generator_clicked)
-        self.deleteGenerator.clicked.connect(self.delete_generator_clicked)
 
         # Connect model and view
         self.gen_model = GeneratorModel()
         self.generatorsTable.setModel(self.gen_model)
+
+        # Enabling RMB context menu
+        self.generatorsTable.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.generatorsTable.customContextMenuRequested.connect(
+            self.custom_menu_requested)
+
         self.generatorsTable.setSelectionMode(QAbstractItemView.SingleSelection)
         self.generatorsTable.horizontalHeader()\
             .setSectionResizeMode(3, QHeaderView.Stretch)
@@ -95,6 +101,16 @@ class GenManager(Ui_Dialog, QDialog):
                               valid, deadline)
             manager.genEdited.connect(self.edit_generator)
             manager.exec_()
+
+    def custom_menu_requested(self, position):
+        """
+        Shows context menu for table cell.
+        """
+
+        menu = QMenu(self)
+        menu.addAction(
+            QAction("Delete", self, triggered=self.delete_generator_clicked))
+        menu.popup(self.generatorsTable.viewport().mapToGlobal(position))
 
     def delete_generator_clicked(self):
         """
