@@ -19,4 +19,5 @@ HEADERS  +=
 FORMS    += mainwindow.ui \
     generators.ui \
     generator.ui \
-    task.ui
+    task.ui \
+    report.ui

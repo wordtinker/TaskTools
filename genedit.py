@@ -1,7 +1,7 @@
 from ui.generator import *
 
 from PyQt5.QtWidgets import QDialog, QMessageBox
-from PyQt5.QtCore import pyqtSignal, QDate
+from PyQt5.QtCore import pyqtSignal
 
 from enums import Projects, Stages, Generators
 import enums

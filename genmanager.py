@@ -1,12 +1,13 @@
 from ui.generators import *
 
 from PyQt5.QtWidgets import QDialog, QAbstractItemView, QHeaderView
-from PyQt5.QtCore import pyqtSignal, QDate, QAbstractTableModel, Qt, QVariant,\
+from PyQt5.QtCore import pyqtSignal, QAbstractTableModel, Qt, QVariant,\
     QModelIndex
 
 from enums import Projects, Stages, Generators
 import enums
 from genedit import GenEdit
+
 
 class GeneratorModel(QAbstractTableModel):
 

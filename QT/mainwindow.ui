@@ -47,9 +47,16 @@
     </property>
     <addaction name="actionManage"/>
    </widget>
+   <widget class="QMenu" name="menuReports">
+    <property name="title">
+     <string>Reports</string>
+    </property>
+    <addaction name="actionReport"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTask"/>
    <addaction name="menuPattern"/>
+   <addaction name="menuReports"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -72,6 +79,11 @@
   <action name="actionManage">
    <property name="text">
     <string>Manage</string>
+   </property>
+  </action>
+  <action name="actionReport">
+   <property name="text">
+    <string>Report</string>
    </property>
   </action>
  </widget>

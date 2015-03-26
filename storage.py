@@ -96,6 +96,29 @@ class Storage:
                           (today, enums.Stages.Done, today))
         return db_cursor.fetchall()
 
+    def select_tasks_for_report(self, start, finish):
+        db_cursor = self.db_conn.cursor()
+        db_cursor.execute("""SELECT
+        m1.task, t.text, t.project, m1.stage, m1.date, t.valid, t.deadline
+        FROM ( SELECT * FROM TimeLog
+               WHERE date <=:finish
+               GROUP BY task) m1
+        INNER JOIN Tasks t ON m1.task=t.taskid
+        AND (t.valid >=:start OR t.valid is NULL)
+        AND NOT (m1.stage =:done AND m1.date <:start)
+        """, {"start": start, "finish": finish, "done": enums.Stages.Done})
+        return db_cursor.fetchall()
+
+    def select_stages(self, task, finish, stage):
+        db_cursor = self.db_conn.cursor()
+        db_cursor.execute("""SELECT
+        stage, date FROM TimeLog
+        WHERE task=:task
+        AND date <=:finish
+        AND stage <>:stage
+        """, {"task": task, "finish": finish, "stage": stage})
+        return db_cursor.fetchall()
+
     def select_generators(self):
         db_cursor = self.db_conn.cursor()
         db_cursor.execute("""SELECT *

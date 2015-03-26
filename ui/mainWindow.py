@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Tue Dec 23 23:27:20 2014
+# Created: Tue Dec 30 23:02:05 2014
 #      by: PyQt5 UI code generator 5.3.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,6 +30,8 @@ class Ui_MainWindow(object):
         self.menuTask.setObjectName("menuTask")
         self.menuPattern = QtWidgets.QMenu(self.menuBar)
         self.menuPattern.setObjectName("menuPattern")
+        self.menuReports = QtWidgets.QMenu(self.menuBar)
+        self.menuReports.setObjectName("menuReports")
         MainWindow.setMenuBar(self.menuBar)
         self.mainToolBar = QtWidgets.QToolBar(MainWindow)
         self.mainToolBar.setObjectName("mainToolBar")
@@ -40,12 +42,16 @@ class Ui_MainWindow(object):
         self.actionNew.setObjectName("actionNew")
         self.actionManage = QtWidgets.QAction(MainWindow)
         self.actionManage.setObjectName("actionManage")
+        self.actionReport = QtWidgets.QAction(MainWindow)
+        self.actionReport.setObjectName("actionReport")
         self.menuFile.addAction(self.actionExit)
         self.menuTask.addAction(self.actionNew)
         self.menuPattern.addAction(self.actionManage)
+        self.menuReports.addAction(self.actionReport)
         self.menuBar.addAction(self.menuFile.menuAction())
         self.menuBar.addAction(self.menuTask.menuAction())
         self.menuBar.addAction(self.menuPattern.menuAction())
+        self.menuBar.addAction(self.menuReports.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -56,7 +62,9 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.menuTask.setTitle(_translate("MainWindow", "Task"))
         self.menuPattern.setTitle(_translate("MainWindow", "Pattern"))
+        self.menuReports.setTitle(_translate("MainWindow", "Reports"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionNew.setText(_translate("MainWindow", "Add"))
         self.actionManage.setText(_translate("MainWindow", "Manage"))
+        self.actionReport.setText(_translate("MainWindow", "Report"))
 

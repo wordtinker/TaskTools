@@ -1,13 +1,12 @@
 from PyQt5.QtCore import Qt, QAbstractListModel, QModelIndex, pyqtSignal,\
-    QFileSystemWatcher, QSize, QUrl, QFile, QMimeData, QVariant, QObject
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QApplication, QTreeView,\
-    QMainWindow, QTableWidgetItem, QProgressDialog, QMessageBox, QHeaderView,\
-    QListView, QLabel, QGridLayout, QVBoxLayout, QAbstractItemView
+    QSize, QMimeData, QVariant, QObject
+from PyQt5.QtWidgets import QApplication, QMainWindow,\
+    QListView, QLabel, QAbstractItemView
 
 from ui.mainWindow import Ui_MainWindow
 from taskedit import TaskEdit
-from genmanager import  GenManager
+from genmanager import GenManager
+from reportmanager import Report
 
 import sys
 import os
@@ -324,6 +323,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         # Connect signals and slots
         self.actionNew.triggered.connect(self.add_new_task)
         self.actionManage.triggered.connect(self.manage_patterns)
+        self.actionReport.triggered.connect(self.report)
 
         # Set headers for Stages
         for i, stage in enumerate(Stages):
@@ -393,6 +393,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         generator_manager.exec_()
 
         self.menuBar.setEnabled(True)
+
+    def report(self):
+        report = Report(self.storage)
+
+        self.menuBar.setEnabled(False)
+
+        report.exec_()
+
+        self.menuBar.setEnabled(True)
+
 
 if __name__ == "__main__":
     log_name = os.path.join(app_data_path, config.log)
