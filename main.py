@@ -210,11 +210,23 @@ class TaskListModel(QAbstractListModel):
         if not index.isValid():
             return QVariant()
 
+        if role == Qt.ToolTipRole:
+            task_id = self.tasks[index.row()]
+            text, *rest, valid, deadline = self.pool.get_task_stats_by_id(task_id)
+            today = datetime.date.today()
+            if deadline:
+                text = " ".join((text, "D:", str(deadline)))
+            if valid:
+                text = " ".join((text, "V:", str(valid)))
+            return QVariant(text)
+
         elif role != Qt.DisplayRole:
             return QVariant()
 
         task_id = self.tasks[index.row()]
         text = self.pool.get_task_name_by_id(task_id)
+        if len(text) > 23:
+            text = text[:20] + " ..."
         return QVariant(text)
 
     # Editable model methods
@@ -398,7 +410,7 @@ if __name__ == "__main__":
         storage = storage.Storage(os.path.join(app_data_path, config.dbname))
         form = MainWindow(storage)
 
-        form.show()
+        form.showMaximized()
 
         sys.exit(app.exec_())
 
