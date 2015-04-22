@@ -345,6 +345,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionNew.triggered.connect(self.add_new_task)
         self.actionManage.triggered.connect(self.manage_patterns)
         self.actionReport.triggered.connect(self.report)
+        self.actionExit.triggered.connect(self.close)
 
         # Set headers for Stages
         for i, stage in enumerate(Stages):
